@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#000000"><title>BUS 14</title>
+<style>
+:root{--bg:#000;--fg:#d8dde3;--ac:#d9a93a}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#000}}
+:root[data-theme=dark]{--bg:#000}
+html,body{height:100%;margin:0;background:var(--bg);overflow:hidden;font-family:'Courier New',monospace;color:var(--fg);touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+body{position:fixed;left:0;top:0;width:100%}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none;touch-action:none}
+.ov{position:fixed;inset:0;z-index:5;background:rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;padding:20px;text-align:center;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior:contain;box-sizing:border-box}
+.ov>:first-child{margin-top:auto}.ov>:last-child{margin-bottom:auto}
+.hid{display:none!important}
+h1{font-size:clamp(56px,16vw,120px);letter-spacing:.12em;margin:0 0 10px;text-shadow:0 0 24px #a02418}
+p{max-width:440px;line-height:1.6;margin:0}
+button{background:none;border:1px solid #778;color:var(--fg);font:inherit;padding:13px 28px;min-width:230px;font-size:18px;letter-spacing:.15em}
+button:active{background:#fff2}
+label{display:flex;gap:10px;align-items:center}
+#hud{position:fixed;inset:0;z-index:2;pointer-events:none}
+#jn{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:18px;font-size:20px;letter-spacing:.2em;opacity:.85}
+#pb{pointer-events:auto;position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;min-width:0;padding:8px 14px;font-size:16px}
+#msg{position:absolute;left:0;right:0;bottom:24%;text-align:center;font-size:clamp(16px,3.6vw,24px);text-shadow:0 0 8px #000,0 0 3px #000;padding:0 20px;transition:opacity 1s;opacity:0}
+#pr{position:absolute;left:0;right:0;top:60%;text-align:center;color:var(--ac);font-size:18px;text-shadow:0 0 6px #000}
+#vb{pointer-events:auto;position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:64px;min-width:0;padding:8px 12px;font-size:16px}
+#eb{pointer-events:auto;position:absolute;right:calc(26px + env(safe-area-inset-right,0px));bottom:calc(40px + env(safe-area-inset-bottom,0px));width:100px;height:100px;border-radius:50%;min-width:0;padding:0;font-size:30px;border:2px solid var(--ac);color:var(--ac);display:none;background:#0008}
+#js{position:absolute;width:110px;height:110px;margin:-55px 0 0 -55px;border:2px solid #fff4;border-radius:50%;display:none}
+#jk{position:absolute;left:35px;top:35px;width:40px;height:40px;border-radius:50%;background:#fff5}
+#fade{position:fixed;inset:0;z-index:3;background:#000;opacity:1;transition:opacity 1s;pointer-events:none}
+#ttl{white-space:pre-line;line-height:1.5;position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(26px,7vw,60px);letter-spacing:.25em;pointer-events:none;opacity:0;transition:opacity 1s}
+body.gl #c{animation:g .12s steps(2) infinite}
+@keyframes g{0%{filter:hue-rotate(90deg) contrast(2.5);transform:translateX(-14px) skewX(6deg)}100%{filter:invert(1);transform:translateX(12px) scaleY(1.05)}}
+#vt{position:fixed;z-index:4;left:50%;transform:translateX(-50%);top:calc(56px + env(safe-area-inset-top,0px));background:#000b;border:1px solid #889;padding:10px 14px;text-align:center;max-width:92vw}#vt button{min-width:0;font-size:16px;padding:14px 26px;min-height:48px;margin:8px 6px 0;letter-spacing:.05em}#vs,#ml{white-space:pre-line;font-size:13px}input{background:#000;color:var(--fg);border:1px solid #778;font:inherit;padding:10px;width:100px;text-align:center;font-size:18px}
+#cb{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));min-width:0;padding:8px 16px;font-size:14px;letter-spacing:.05em;background:#000a}#cp{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(92vw,380px);box-sizing:border-box;background:#000c;border:1px solid #889;padding:8px;font-size:13px}#cl{max-height:28vh;overflow-y:auto;overflow-x:hidden;text-align:left;margin-bottom:6px;word-break:break-word;touch-action:pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;scrollbar-width:thin;scrollbar-color:#889 transparent;padding-right:4px}
+#cl::-webkit-scrollbar{width:6px}#cl::-webkit-scrollbar-track{background:transparent}#cl::-webkit-scrollbar-thumb{background:#889;border-radius:3px}#cl::-webkit-scrollbar-thumb:hover{background:#aab}#cr{display:flex;gap:6px}#ci{flex:1;min-width:0;width:auto;text-align:left;font-size:16px;padding:8px}#cr button{min-width:0;padding:8px 12px;font-size:14px;letter-spacing:0}
+#fs{position:fixed;z-index:6;top:calc(10px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));min-width:0;padding:8px 12px;font-size:16px;letter-spacing:0;background:#0008}#hud:not(.hid)~#fs{right:128px}
+#mi{text-transform:uppercase}
+@media(max-height:520px){h1{font-size:clamp(34px,11vh,64px);margin:0}button{padding:8px 22px;font-size:15px;min-width:190px}.ov{gap:8px;padding:10px}p{line-height:1.4;font-size:14px}}
+select{background:#000;color:var(--fg);border:1px solid #778;font:inherit;padding:8px}
+/* ---------- loading screen */
+#ld{position:fixed;inset:0;z-index:20;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;box-sizing:border-box;text-align:center;color:var(--ac);opacity:1;transition:opacity .6s ease;overflow:hidden}
+#ld.off{opacity:0;pointer-events:none}
+#ld::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,#0000 0,#0000 2px,#ffffff08 3px);pointer-events:none}
+#ld::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,#0000 40%,#000 100%);pointer-events:none}
+#ldn{font-size:clamp(44px,13vw,96px);letter-spacing:.14em;color:var(--fg);text-shadow:0 0 22px #a02418;animation:ldf 3.2s steps(1) infinite;margin:0 0 4px}
+#ldr{font-size:12px;letter-spacing:.35em;opacity:.55}
+#ldt{font-size:clamp(14px,3.6vw,18px);letter-spacing:.3em;text-shadow:0 0 8px #d9a93a66;min-height:1.4em}
+#ldt i{font-style:normal;animation:ldd 1.2s infinite;opacity:.15}#ldt i:nth-child(2){animation-delay:.2s}#ldt i:nth-child(3){animation-delay:.4s}
+#ldbar{width:min(70vw,320px);height:4px;border:1px solid #d9a93a66;padding:1px;box-sizing:content-box}
+#ldb{height:100%;width:0;background:var(--ac);box-shadow:0 0 10px #d9a93a;transition:width .22s ease-out}
+#ldp{font-size:12px;letter-spacing:.2em;opacity:.7}
+#ldh{font-size:12px;color:#8a8f96;max-width:320px;line-height:1.6;min-height:2.4em;margin-top:6px}
+@keyframes ldd{0%,100%{opacity:.15}40%{opacity:1}}
+@keyframes ldf{0%,92%,96%{opacity:1}94%{opacity:.35}98%{opacity:.7}}
+@media(prefers-reduced-motion:reduce){#ldn,#ldt i{animation:none}#ldt i{opacity:1}}
+</style>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>window.Peer||document.write('<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"><\/script>')</script>
+</head><body>
+<div id="ld"><h1 id="ldn">BUS 14</h1><div id="ldr">RUTE 14 &gt; TERMINAL 0</div><div id="ldt"><span id="ldl">MEMUAT</span><i>.</i><i>.</i><i>.</i></div><div id="ldbar"><div id="ldb"></div></div><div id="ldp">0%</div><div id="ldh"></div></div>
+<script>setTimeout(function(){if(!window.THREE){var l=document.getElementById('ldl');if(l)l.textContent='GAGAL MEMUAT - PERIKSA INTERNET'}},12000)</script>
+<canvas id="c"></canvas>
+<div id="hud" class="hid"><div id="jn"></div><button id="pb">II</button><button id="vb">👁</button><div id="msg"></div><div id="pr"></div><button id="eb">E</button><div id="js"><i id="jk"></i></div></div>
+<button id="fs" title="Layar penuh" aria-label="Layar penuh">⛶</button>
+<div id="fade"></div><div id="ttl"></div>
+<div id="menu" class="ov"><h1>BUS 14</h1><p id="best"></p><button id="bs">SINGLEPLAYER</button><button id="bp">MULTIPLAYER</button><button id="bh">CARA BERMAIN</button><button id="bo">PENGATURAN</button></div>
+<div id="how" class="ov hid"><p>Kamu terjebak di TERMINAL 0. Naiki bus dan periksa keadaannya dengan teliti.<br><br>Jika semuanya normal, tekan tombol di belakang kursi pengemudi.<br>Jika ada yang berbeda, keluar lewat pintu bus.<br><br>Salah menilai, kamu kembali ke Terminal 0. Sampai BUS 14 untuk keluar.<br><br>PC: WASD gerak, mouse melihat, E interaksi, F ganti sudut pandang (default: orang ketiga), ESC jeda.<br>HP: joystick kiri, geser layar kanan untuk melihat, tombol E, tombol 👁 ganti sudut pandang.</p><button class="bk">KEMBALI</button></div>
+<div id="set" class="ov hid"><label>Sensitivitas <input id="sn" type="range" min=".4" max="2.5" step=".1" value="1"></label><label>Tombol Chat <select id="ck"><option>T</option><option>C</option><option>V</option><option>Enter</option></select></label><label>Sudut Pandang <select id="vw"><option value="1">Orang ketiga</option><option value="0">Orang pertama</option></select></label><label>Volume <input id="vl" type="range" min="0" max="1" step=".05" value=".7"></label><button class="bk">KEMBALI</button></div>
+<div id="pause" class="ov hid"><h2>JEDA</h2><button id="br">LANJUT</button><button id="bm">MENU UTAMA</button></div>
+<div id="mp" class="ov hid"><h2>BUS 14 — MULTIPLAYER</h2><div id="mpa"><button id="mc">BUAT ROOM</button><br><br><input id="mi" maxlength="4" placeholder="ID" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false"> <button id="mj">GABUNG ROOM</button><p id="mn"></p></div><div id="mr" class="hid"><p id="mid"></p><button id="mcp">SALIN LINK UNDANGAN</button><p id="ml"></p><button id="mrdy">READY</button><button id="mst">MULAI</button></div><button id="mb">KEMBALI</button></div>
+<div id="vt" class="hid"><b id="vq"></b><div id="vbx"><button id="vy"></button><button id="vn"></button></div><small id="vs"></small></div>
+<button id="cb" class="hid">💬 CHAT</button>
+<div id="cp" class="hid"><div id="cl"></div><div id="cr"><input id="ci" maxlength="100" placeholder="Enter kirim · Esc tutup" autocomplete="off"><button id="cs">KIRIM</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>window.THREE||document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>')</script>
+<script>
+const $=i=>document.getElementById(i),T=THREE,pad=n=>String(n).padStart(2,'0'),cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+let touch=matchMedia('(pointer:coarse)').matches;
+let S={mode:'menu',n:1,tok:0,paused:0,sens:1,vol:.7,best:0,anom:null,lastA:-1,nn:0,lock:0,travel:0,arr:0,dopen:0,act:0,mute:0};
+try{S.best=+localStorage.getItem('b14')||0}catch(e){}
+S.tp=1;try{const v=localStorage.getItem('b14tp');if(v!=null)S.tp=+v?1:0}catch(e){}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const w=async ms=>{const t=S.tok;await wait(ms);while(S.paused)await wait(100);if(t!==S.tok)throw 0};
+const run=f=>{S.tok++;f().catch(e=>{if(e)console.error(e)})};
+// ---------- renderer
+const rd=new T.WebGLRenderer({canvas:$('c'),antialias:false});rd.setPixelRatio(Math.min(devicePixelRatio,1.5));
+const scene=new T.Scene(),cam=new T.PerspectiveCamera(70,1,.05,60);scene.fog=new T.FogExp2(0x05070a,.05);scene.add(cam);
+let RW=0,RH=0;
+function rs(f){const de=document.documentElement,w=Math.round(innerWidth||de.clientWidth),h=Math.round(innerHeight||de.clientHeight);if(w<2||h<2)return;if(!f&&w==RW&&h==RH)return;
+if(!f&&RW&&w==RW&&h<RH&&document.activeElement&&document.activeElement.tagName=='INPUT')return;// keyboard HP: jangan ubah rasio saat mengetik chat
+RW=w;RH=h;rd.setPixelRatio(Math.min(devicePixelRatio||1,1.5));rd.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+const rsl=()=>rs();addEventListener('resize',rsl);addEventListener('orientationchange',()=>{rsl();setTimeout(rsl,150);setTimeout(rsl,600)});addEventListener('pageshow',rsl);
+document.addEventListener('fullscreenchange',()=>{rsl();setTimeout(rsl,200)});document.addEventListener('webkitfullscreenchange',()=>{rsl();setTimeout(rsl,200)});
+try{window.visualViewport&&visualViewport.addEventListener('resize',rsl)}catch(e){}try{window.ResizeObserver&&new ResizeObserver(rsl).observe(document.documentElement)}catch(e){}
+rd.domElement.addEventListener('webglcontextlost',e=>e.preventDefault());rd.domElement.addEventListener('webglcontextrestored',()=>rs(1));
+rs(1);setTimeout(rsl,300);setTimeout(rsl,1500);
+const hemi=new T.HemisphereLight(0x8899aa,0x111116,.5);scene.add(hemi);
+const pl=[-2.2,2.4].map(z=>{const l=new T.PointLight(0xe6ecff,.9,9);l.position.set(0,2.2,z);scene.add(l);return l});
+const M=(()=>{const c={};return(k,e)=>c[k+'|'+(e||0)]||(c[k+'|'+(e||0)]=new T.MeshLambertMaterial({color:k,emissive:e||0}))})();
+let bus=new T.Group(),R={};scene.add(bus);
+const B=(w,h,d,c,x,y,z,p,e)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),M(c,e));m.position.set(x,y,z);(p||bus).add(m);return m};
+function tex(t,w,h,bg,fg,fs){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle=bg;g.fillRect(0,0,w,h);g.fillStyle=fg;g.font='bold '+fs+'px monospace';g.textAlign='center';g.textBaseline='middle';const a=t.split('\n');a.forEach((l,i)=>g.fillText(l,w/2,h/2+(i-(a.length-1)/2)*fs*1.25));return new T.CanvasTexture(c)}
+const P=(t,w,h,x,y,z,ry,p)=>{const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t}));m.position.set(x,y,z);m.rotation.y=ry||0;(p||bus).add(m);return m};
+const setT=(m,...a)=>{m.material.map=tex(...a)};
+function clear(g){g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material.map)o.material.map.dispose()});g.clear()}
+// ---------- bus interior
+function seat(x,z,c){const g=new T.Group();g.position.set(x,0,z);bus.add(g);B(.7,.15,.6,c,0,.45,0,g);B(.7,.65,.12,c,0,.85,.3,g);B(.1,.4,.1,0x333333,0,.2,0,g);return g}
+function person(c,x,z,ry){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=ry||0;bus.add(g);g.tor=B(.44,.6,.26,c,0,.95,.05,g);B(.4,.14,.5,0x1d2530,0,.56,-.2,g);B(.38,.45,.14,0x1d2530,0,.3,-.42,g);const h=new T.Mesh(new T.SphereGeometry(.14,8,8),M(0xd2a988));h.position.set(0,1.42,.05);g.add(h);B(.05,.05,.08,0xb98d6c,0,-.02,-.13,h);g.head=h;return g}
+function buildBus(){clear(bus);R={};const W=0x232830,I=Math.PI;
+B(2.6,.06,11,0x2a2c30,0,0,-.5);B(2.6,.06,11,0xc8ccd0,0,2.4,-.5);B(2.6,2.4,.1,0x1b1e24,0,1.2,5);B(2.6,.9,.1,W,0,.45,-6);B(2.6,.5,.1,W,0,2.15,-6);
+B(.1,.9,11,W,-1.3,.45,-.5);B(.1,.5,11,W,-1.3,2.15,-.5);B(.1,.5,11,W,1.3,2.15,-.5);
+[[-6,-4.2],[-2.8,3.8],[4.8,5]].forEach(([a,b])=>B(.1,.9,b-a,W,1.3,.45,(a+b)/2));
+const gm=new T.MeshBasicMaterial({color:0x1d2c36,transparent:true,opacity:.5,depthWrite:false});
+const gl=(x,a,b,ry)=>{const m=new T.Mesh(new T.PlaneGeometry(b-a,1),gm);m.position.set(x,1.4,(a+b)/2);m.rotation.y=ry;bus.add(m)};gl(-1.28,-6,5,I/2);gl(1.28,-2.8,3.8,-I/2);
+const door=(a,b)=>B(.06,1.85,b-a,0x26343f,1.3,.98,(a+b)/2,bus,0x0a1418);R.fd=door(-4.2,-2.8);R.rd=door(3.8,4.8);
+for(let z=-5;z<=4;z+=1.5){B(.08,1.1,.08,W,-1.27,1.45,z);if(z>-2.5&&z<3.5)B(.08,1.1,.08,W,1.27,1.45,z)}
+R.st=[[],[]];[-.85,.85].forEach((x,s)=>[-1.8,-.6,.6,1.8,3].forEach(z=>R.st[s].push(seat(x,z,0x2f4a78))));
+R.poles=[];[-.55,.55].forEach(x=>[-1.2,0,1.2,2.4].forEach(z=>R.poles.push(B(.04,2.1,.04,0xbcc2c8,x,1.05,z))));[-.55,.55].forEach(x=>B(.04,.04,9,0xbcc2c8,x,2.1,.5));
+R.ls=[-3.5,-1.2,1.1,3.4].map(z=>B(.4,.03,1.2,0xffffff,0,2.37,z,bus,0xdfe8ff));pl.forEach(l=>l.color.set(0xe6ecff));
+// driver cabin
+B(1.2,1.5,.06,W,.7,.75,-4.5);seat(.7,-5.2,0x222222);R.D=person(0x2a4a7a,.7,-5.2,0);B(1.4,.5,.4,0x111111,.5,.85,-5.8);
+const wh=new T.Mesh(new T.TorusGeometry(.16,.02,6,14),M(0x111111));wh.position.set(.7,1.1,-5.6);wh.rotation.x=1.1;bus.add(wh);
+B(.24,.32,.05,0x222222,.75,1.2,-4.46);R.btn=B(.1,.1,.06,0xcc2222,.75,1.2,-4.42,bus,0x660000);P(tex('TEKAN',128,32,'#222','#ddd',20),.24,.06,.75,1.42,-4.46,I);
+// passengers
+R.A=person(0x7a5a3a,-.85,-.6,0);R.bag=B(.3,.25,.12,0x8a3b2a,0,.8,-.34,R.A);
+R.Bp=person(0x3a5a6b,.85,.6,0);R.Bp.head.rotation.x=.5;B(.09,.16,.02,0x101010,0,.85,-.32,R.Bp);R.scr=B(.075,.14,.01,0x0a2a55,0,.85,-.335,R.Bp,0x1f6fff);
+// objects, ads
+R.bin=B(.35,.55,.35,0x3a4a3a,-1.05,.3,4.4);R.fbag=B(.4,.3,.2,0x555555,-.95,.18,-3.3);R.bottle=B(.07,.22,.07,0x44aa88,-.85,.64,1.8);
+R.ad1=P(tex('KOPI SENJA - HANGAT DI SETIAP TEGUKAN',512,100,'#e8d9a0','#3a2a10',26),1.6,.32,-1.24,2.15,-1.5,I/2);
+R.ad2=P(tex('BANK KOTA - TABUNG SEKARANG',512,100,'#2a6a8a','#fff',30),1.6,.32,1.24,2.15,2.2,-I/2);
+R.post=P(tex('AWAS COPET!\nJAGA BARANG ANDA',256,180,'#d9d2c0','#7a1a1a',26),1,.7,-.5,1.5,4.94,I);
+R.route=P(tex('RUTE 14 > TERMINAL 0',512,100,'#000','#ffb020',40),1.7,.32,0,2.15,-5.94);
+R.clk=P(tex('22:47',256,100,'#000','#40ff70',52),.6,.24,-.95,2.15,-5.94);R.num=P(tex('14',256,100,'#000','#ffb020',60),.6,.24,.95,2.15,-5.94);
+}
+// ---------- anomalies (each mutates R after buildBus)
+const AN=[
+()=>person(0x5c4a6b,.85,-1.8,0),
+()=>person(0x6b3a3a,-.85,3,Math.PI),
+()=>R.A.visible=false,
+()=>R.Bp.visible=false,
+()=>R.Bp.position.set(-.85,0,3),
+()=>R.A.rotation.y=Math.PI,
+()=>{R.Bp.position.set(.05,.45,-.9);R.Bp.rotation.y=Math.PI},
+()=>R.bag.visible=false,
+()=>B(.32,.26,.14,0x3a6a3a,.85,.66,3),
+()=>setT(R.ad1,'KOPI SENJA - HANGUS DI SETIAP TEGUKAN',512,100,'#e8d9a0','#3a2a10',26),
+()=>setT(R.post,'AWAS COPET!\nJANGAN MENOLEH',256,180,'#d9d2c0','#7a1a1a',26),
+()=>setT(R.clk,'03:33',256,100,'#000','#40ff70',52),
+()=>{R.fd.position.z-=1.3;noise(.6,500,.25)},
+()=>{const g=new T.Group(),m=new T.MeshBasicMaterial({color:0,transparent:true,opacity:.7}),b=new T.Mesh(new T.PlaneGeometry(.5,1.4),m),h=new T.Mesh(new T.CircleGeometry(.17,10),m);b.position.y=1.05;h.position.y=1.98;g.add(b,h);g.position.set(-1.26,0,1.4);g.rotation.y=Math.PI/2;bus.add(g)},
+()=>R.poles[RS()*8|0].visible=false,
+()=>{R.ls[1].material=M(0xd0ffd0,0x88ff99);pl[0].color.set(0xb0ffc0)},
+()=>R.D.tor.material=M(0x8a2a2a),
+()=>R.D.visible=false,
+()=>R.D.head.rotation.y=Math.PI,
+()=>setT(R.num,'41',256,100,'#000','#ffb020',60),
+()=>{const s=new T.Mesh(new T.SphereGeometry(.18,10,8),M(0xcc2222));s.position.set(0,2,1.6);bus.add(s);B(.006,.8,.006,0xffffff,0,1.5,1.6)},
+()=>[R.bin,R.fbag,R.bottle][RS()*3|0].visible=false,
+()=>R.scr.material=M(0x300000,0xff2020),
+()=>B(.5,.012,.4,0x0b1219,R.st[0][3].position.x,.535,R.st[0][3].position.z),
+()=>setT(R.route,'RUTE 14 > TIDAK ADA',512,100,'#000','#ffb020',40),
+()=>R.st[0][3].position.z+=.35];
+function genA(){const n=S.n==1||(S.nn<2&&Math.random()<.27);if(n){S.nn++;return -1}S.nn=0;let a;do{a=Math.random()*AN.length|0}while(a==S.lastA);S.lastA=a;return a}
+const RS=()=>(S.sd=(S.sd*1664525+1013904223)>>>0)/4294967296;
+function pick(){let a;if(S.mp)a=S.mpA;else{a=genA();S.sd=Date.now()&65535}S.anom=a<0?null:a;if(a>=0)AN[a]()}
+// ---------- terminal
+const term=new T.Group();scene.add(term);let sign,ext,tl;
+(function(){const p=term;B(40,.1,60,0x15181d,0,-.05,-15,p);B(40,.02,5,0x0c0d10,0,.02,-4.5,p);B(40,.02,.12,0xc9a227,0,.03,-2.2,p,0x332a00);term.roof=B(9,.2,6,0x2c323a,0,3.5,-1,p);term.b2=B(2,.1,.5,0x444a52,2.5,.5,1.2,p);
+[-4,4].forEach(x=>[-3.6,1.6].forEach(z=>B(.2,3.5,.2,0x2c323a,x,1.75,z,p)));[-2,0].forEach(z=>B(2.2,.05,.4,0xffffff,0,3.38,z,p,0xdde6ff));
+B(2,.1,.5,0x444a52,-2.5,.5,1.2,p);B(.1,.5,.1,0x333,-3.3,.25,1.2,p);B(.1,.5,.1,0x333,-1.7,.25,1.2,p);
+sign=P(tex('BUS 14 - MENUNGGU...',512,110,'#050505','#ffb020',40),3.4,.75,0,2.85,-2.4,0,p);
+tl=new T.PointLight(0xdfe8ff,1,14);tl.position.set(0,3,-1);scene.add(tl);
+ext=new T.Group();ext.position.set(-60,0,-4.5);scene.add(ext);B(10,2.6,
